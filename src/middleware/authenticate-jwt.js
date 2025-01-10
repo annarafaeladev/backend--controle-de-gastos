@@ -21,3 +21,18 @@ export const authenticateToken = async (request, response, next) => {
 
   next();
 };
+
+export const loginCredencials = (request, response, next) => {
+  const { email, password } = request.body;
+
+  if (
+    !email ||
+    email.split("@")?.length < 2 ||
+    !password ||
+    password?.length < 6
+  ) {
+    return response.status(401).json({ message: "Credenciais inválidas" });
+  }
+
+  next();
+};
