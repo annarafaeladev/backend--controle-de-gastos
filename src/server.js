@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 
 import { auth, signInWithEmailAndPassword } from "./firebase/firebaseClient.js";
 import { firebaseAdmin } from "./firebase/firebaseAdmin.js";
+import { authenticateToken } from "./middleware/authenticate-jwt.js";
 
 dotenv.config();
 
@@ -30,26 +31,11 @@ app.post("/auth/login", async (request, response) => {
   }
 });
 
-app.get("/transactions", async (request, response) => {
-  const jwt = request.headers.authorization.replace("Bearer ", "");
-
-  if (!jwt) {
-    return response.status(401).json({ message: "Usuario nao autenticado" });
-  }
-
-  let decodeIdToken;
-
-  try {
-    decodeIdToken = await firebaseAdmin.auth().verifyIdToken(jwt, true);
-  } catch (error) {
-    console.log(error.message);
-    return response.status(401).json({ message: "Usuario nao autorizado" });
-  }
-
+app.get("/transactions", authenticateToken, async (request, response) => {
   firebaseAdmin
     .firestore()
     .collection("transactions")
-    .where("user.uid", "==", decodeIdToken.sub)
+    .where("user.uid", "==", request.user.uid)
     .get()
     .then((snapshot) => {
       const transacitons = snapshot.docs.map((doc) => ({
