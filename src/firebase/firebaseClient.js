@@ -1,8 +1,8 @@
-// Import the functions you need from the SDKs you need
+import dotenv from "dotenv";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+
+dotenv.config();
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -13,7 +13,7 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
+// Initialize Firebase Client
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 

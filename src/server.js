@@ -1,19 +1,15 @@
+import dotenv from "dotenv";
 import express from "express";
 import bodyParser from "body-parser";
-import admin from "firebase-admin";
-import dotenv from "dotenv";
-import { auth, signInWithEmailAndPassword } from "./client/firebaseClient.js";
 
-const app = express();
-
-// Configurar o body-parser para processar JSON
-app.use(bodyParser.json());
+import { auth, signInWithEmailAndPassword } from "./firebase/firebaseClient.js";
+import { firebaseAdmin } from "./firebase/firebaseAdmin.js";
 
 dotenv.config();
 
-admin.initializeApp({
-  credential: admin.credential.cert("serviceAccountKey.json"),
-});
+const app = express();
+// Configurar o body-parser para processar JSON
+app.use(bodyParser.json());
 
 app.post("/auth/login", async (request, response) => {
   const { email, password } = request.body;
@@ -38,19 +34,19 @@ app.get("/transactions", async (request, response) => {
   const jwt = request.headers.authorization.replace("Bearer ", "");
 
   if (!jwt) {
-    return response.status(401).json({ message: "Usuario nao autorizado" });
+    return response.status(401).json({ message: "Usuario nao autenticado" });
   }
 
   let decodeIdToken;
 
   try {
-    decodeIdToken = await admin.auth().verifyIdToken(jwt, true);
+    decodeIdToken = await firebaseAdmin.auth().verifyIdToken(jwt, true);
   } catch (error) {
+    console.log(error.message);
     return response.status(401).json({ message: "Usuario nao autorizado" });
   }
 
-  console.log(decodeIdToken);
-  admin
+  firebaseAdmin
     .firestore()
     .collection("transactions")
     .where("user.uid", "==", decodeIdToken.sub)
