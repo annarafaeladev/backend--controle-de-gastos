@@ -4,7 +4,17 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 dotenv.config();
 
-const firebaseConfig = {
+interface IFirebaseClientConfig {  
+  apiKey?: string,
+  authDomain?: string,
+  projectId?: string,
+  storageBucket?: string,
+  messagingSenderId?: string,
+  appId?: string,
+}
+
+
+const firebaseConfig: IFirebaseClientConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,
   projectId: process.env.FIREBASE_PROJECT_ID,

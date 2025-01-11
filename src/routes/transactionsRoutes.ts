@@ -1,6 +1,6 @@
 import { Router } from "express";
-import TransactionController from "../controller/TransactionController.js";
-import { authenticateToken } from "../middleware/authenticate-jwt.js";
+import TransactionController from "../controller/TransactionController";
+import { authenticateToken } from "../middleware/authenticate-jwt";
 
 const router = Router();
 
